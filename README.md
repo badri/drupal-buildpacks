@@ -248,7 +248,7 @@ The `package.toml` specifies where to find the buildpack that's being packaged. 
 
 So that everyone else can build their images from your buildpack.
 
-  pack build -b registry.acme-corp.com/my-buildpack-1 -b registry.acme-corp.com/my-buildpack-2 my-app-image:v1.0
+    pack build -b registry.acme-corp.com/my-buildpack-1 -b registry.acme-corp.com/my-buildpack-2 my-app-image:v1.0
 
 
 ## Building buildpacks in the cluster
