@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+if [[ ! -f buildpack.yml ]]; then
+   version="7.4"
+else
+  version=$(cat buildpack.yml | yj | jq -r ".php .version")
+fi
+
+versions=("7.3" "7.4" "8.0")
+
+if ! [[ " ${versions[@]} " =~ " ${version} " ]]; then
+  echo "$version not supported"
+  exit 1
+fi
+
+plan=$2
+
+echo "provides = [{ name = \"php\" }]" > "$plan"
+echo "requires = [{ name = \"php\", version = \"$version\" }]" >> "$plan"
+
+exit 0
+

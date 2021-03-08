@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+echo "---> Composer Buildpack"
+
+if [[ ! -f composer.json ]]; then
+   exit 100
+fi

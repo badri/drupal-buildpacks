@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+echo "---> PHP Buildpack"
+
+# 1. GET ARGS
+layersdir=$1
+plan=$3
+
+declare -A dl_urls=(
+  ["7.3"]="https://buildpacks.cloudfoundry.org/dependencies/php/php_7.3.27_linux_x64_cflinuxfs3_267c03f0.tgz"
+  ["7.4"]="https://buildpacks.cloudfoundry.org/dependencies/php/php_7.4.15_linux_x64_cflinuxfs3_4015c116.tgz"
+  ["8.0"]="https://buildpacks.cloudfoundry.org/dependencies/php/php_8.0.2_linux_x64_cflinuxfs3_c6a58cc0.tgz"
+)
+
+# 2. DOWNLOAD PHP
+phplayer="$layersdir"/php
+php_version=$(cat "$plan" | yj -t | jq -r '.entries[] | select(.name == "php") | .version')
+
+# clean up if current version is not same as installed version
+if [[ -f "$phplayer/version" ]]; then
+  installed_version=$(cat "$phplayer/version")
+  if [[ "$installed_version" != "$php_version" ]]; then
+    rm -rf "$phplayer"
+  fi
+fi
+
+# Download
+if [[ ! -f "$phplayer/bin/php" ]]; then
+  echo "---> Downloading and setting up PHP $php_version"
+  mkdir -p "$phplayer"
+  php_url="${dl_urls[$php_version]}"
+  wget -q -O - "$php_url" | tar -xzf - -C "$phplayer"
+  echo "$php_version" > "$phplayer/version"
+fi
+
+
+
+# 3. MAKE PHP AVAILABLE DURING LAUNCH
+echo -e 'launch = true\nbuild=true\ncache=true' > "$phplayer.toml"

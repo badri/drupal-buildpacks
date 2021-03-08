@@ -1,0 +1,11 @@
+# Buildpack API version
+api = "0.2"
+
+# Buildpack ID and metadata
+[buildpack]
+id = "acme-buildpacks/php-fpm"
+version = "0.0.1"
+name = "Php FPM Scaffold"
+
+[[stacks]]
+id = "io.buildpacks.stacks.bionic"
