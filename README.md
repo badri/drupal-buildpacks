@@ -135,22 +135,24 @@ We setup and install PHP and cache it so that we needn't do it unless
 1. We're running the first time
 2. The PHP version is changed by the developers
 
-    # clean up if current version is not same as installed version
-    if [[ -f "$phplayer/version" ]]; then
-      installed_version=$(cat "$phplayer/version")
-      if [[ "$installed_version" != "$php_version" ]]; then
-        rm -rf "$phplayer"
-      fi
-    fi
+```shell
+# clean up if current version is not same as installed version
+if [[ -f "$phplayer/version" ]]; then
+  installed_version=$(cat "$phplayer/version")
+  if [[ "$installed_version" != "$php_version" ]]; then
+    rm -rf "$phplayer"
+  fi
+fi
 
-    # Download
-    if [[ ! -f "$phplayer/bin/php" ]]; then
-      echo "---> Downloading and setting up PHP $php_version"
-      mkdir -p "$phplayer"
-      php_url="${dl_urls[$php_version]}"
-      wget -q -O - "$php_url" | tar -xzf - -C "$phplayer"
-      echo "$php_version" > "$phplayer/version"
-    fi
+# Download
+if [[ ! -f "$phplayer/bin/php" ]]; then
+  echo "---> Downloading and setting up PHP $php_version"
+  mkdir -p "$phplayer"
+  php_url="${dl_urls[$php_version]}"
+  wget -q -O - "$php_url" | tar -xzf - -C "$phplayer"
+  echo "$php_version" > "$phplayer/version"
+fi
+```
 
 Every buildpack build stage is ephemeral, in the sense that it doesn't add any file to the final image to be shipped unless we say so.
 We want the PHP executable to be available in the final image. The buildpack way of saying this is to create a [`launch.toml`](https://github.com/buildpacks/spec/blob/main/buildpack.md#launchtoml-toml).
